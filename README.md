@@ -9,7 +9,6 @@ This repository contains the implementation of a comprehensive machine learning 
 ## Table of Contents
 - [Project Overview](#project-overview)
 - [Motivation](#motivation)
-- [System Architecture](#system-architecture)
 - [Directory Structure](#directory-structure)
 - [Methodology](#methodology)
 - [Dataset Construction](#dataset-construction)
@@ -61,71 +60,6 @@ We address these challenges through three complementary approaches:
 3. Evaluating performance on authentic Indian digital discourse from Reddit
 
 ---
-
-## System Architecture
-
-The project follows a modular architecture integrating multiple components for robust empathy detection:
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                   Input Layer                                │
-│     (Hindi/Hinglish Mental Health Dialogues & Reddit Posts)  │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────────────┐
-│              Preprocessing Module                            │
-│  • Text Cleaning (preserving code-mixing)                    │
-│  • Hindi-specific Tokenization (IndicNLP)                    │
-│  • Devanagari Script Normalization                           │
-│  • Code-mixing Pattern Preservation                          │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────────────┐
-│         XLM-R Cross-Lingual Encoder (270M params)            │
-│  • Pretrained on 100 languages (including Hindi)             │
-│  • Shared subword vocabulary using SentencePiece             │
-│  • Handles code-mixed text seamlessly                        │
-│  • Contextualized multilingual representations               │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────────────┐
-│           ASEM Architecture Components                       │
-│                                                               │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │  Sentiment Attention Module                         │    │
-│  │  • Identifies sentiment-bearing tokens              │    │
-│  │  • Captures positive/negative valence               │    │
-│  └─────────────────────────────────────────────────────┘    │
-│                                                               │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │  Emotion Attention Module                           │    │
-│  │  • Focuses on emotion-expressing tokens             │    │
-│  │  • Tracks discrete emotions (joy, sadness, anger)   │    │
-│  └─────────────────────────────────────────────────────┘    │
-│                                                               │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────────────┐
-│              Empathy Classification Layer                    │
-│  • Concatenated sentiment + emotion + context features      │
-│  • Feed-forward neural networks                              │
-│  • Multi-class classification (5 empathy categories)         │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────────────┐
-│                  Output Layer                                │
-│                                                               │
-│  Primary Outputs:                                            │
-│  • Empathy Category Prediction                               │
-│  • Confidence Scores                                         │
-│  • Explanation Generation                                    │
-│                                                               │
-│  Evaluation Metrics:                                         │
-│  • Classification Performance (Precision, Recall, F1)        │
-│  • Cross-Lingual Consistency                                 │
-│  • Cultural Appropriateness                                  │
-└─────────────────────────────────────────────────────────────┘
-```
 
 ### Training Pipeline Architecture
 
