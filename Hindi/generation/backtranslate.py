@@ -30,50 +30,41 @@ def translate(model, tok, text, src_lang, tgt_lang):
     return tok.decode(out[0], skip_special_tokens=True)
 
 
-def back_translate_hinglish(text):
-    """
-    Hinglish → Hindi → Hinglish
-    or
-    Hinglish → English → Hinglish
-    """
+def back_translate_english(text):
+    """ Hinglish → English → Hinglish (Qwen2.5) """
 
-    try:
-        # Hinglish → Hindi
-        hi = translate(bt_hi_model, bt_hi_tok, text, "en", "hi")
+    # Hinglish → English
+    messages = [
+        {"role": "system", "content": "Translate Hinglish into fluent English."},
+        {"role": "user", "content": text}
+    ]
+    inp = tok.apply_chat_template(messages, return_tensors="pt").to(model.device)
+    out = model.generate(inp, max_new_tokens=200, temperature=0.7)
+    english = tok.decode(out[0], skip_special_tokens=True)
 
-        # Hindi → Hinglish (via Qwen2.5)
-        messages = [
-            {"role": "system", "content": "Translate Hindi text back into natural Hinglish. Sound like a real Indian."},
-            {"role": "user",    "content": hi},
-        ]
-        inp = tokenizer.apply_chat_template(messages, return_tensors="pt").to(model.device)
+    # English → Hinglish
+    messages2 = [
+        {"role": "system", "content": "Translate this English text into natural Hinglish (Hindi-English mix)."},
+        {"role": "user", "content": english}
+    ]
+    inp2 = tok.apply_chat_template(messages2, return_tensors="pt").to(model.device)
+    out2 = model.generate(inp2, max_new_tokens=200, temperature=0.7)
+    hinglish_back = tok.decode(out2[0], skip_special_tokens=True)
 
-        out = model.generate(
-            inp,
-            max_new_tokens=200,
-            temperature=0.7,
-            top_p=0.9,
-            do_sample=True
-        )
-        hinglish_rev = tokenizer.decode(out[0], skip_special_tokens=True)
+    return hinglish_back.strip()
 
-        return hinglish_rev
-
-    except Exception as e:
-        print("Back-translation failed:", e)
-        return text
 dialogue = None
 while dialogue is None:
     raw = generate_dialogue(topic)
     dialogue = clean_dialogue(raw)
 
-# NEW: add BT-augmented version
-bt_dialogue = back_translate_hinglish(dialogue)
+bt_en = back_translate_english(dialogue)
+bt_hi = back_translate_hinglish(dialogue)
 
 batch_data.append({
     "id": i + 1,
     "topic": topic,
     "dialogue_original": dialogue,
-    "dialogue_bt": bt_dialogue
+    "dialogue_bt_en": bt_en,
+    "dialogue_bt_hi": bt_hi
 })
-
