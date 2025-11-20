@@ -16,15 +16,12 @@ This repository contains the implementation of a comprehensive machine learning 
 - [Installation](#installation)
 - [Usage](#usage)
 - [Features](#features)
-- [Contributors](#contributors)
-- [Acknowledgments](#acknowledgments)
-- [License](#license)
 
 ---
 
 ## Project Overview
 
-This project addresses a critical gap in mental health AI systems: the lack of culturally appropriate empathy detection for Indian languages, specifically Hindi. While Large Language Models (LLMs) are increasingly deployed in therapeutic and emotionally sensitive contexts, their capacity to express culturally appropriate empathy across language boundaries remains largely unstudied.
+This project addresses a critical gap in mental health AI systems. Viz, the lack of culturally appropriate empathy detection for Indian languages, specifically Hindi. While Large Language Models (LLMs) are increasingly deployed in therapeutic and emotionally sensitive contexts, their capacity to express culturally appropriate empathy across language boundaries remains largely unstudied.
 
 **Key Objectives:**
 - Develop a multilingual empathy detection model for Hindi mental health dialogues
@@ -42,15 +39,15 @@ India shows suicide rates reaching 12.4 per 100,000 people, with suicide remaini
 
 ### The Problem
 
-Existing empathy evaluation benchmarks focus predominantly on English-language interactions, creating a massive representational gap for Hindi speakers and other Indian language communities. Current mental health AI tools are:
+Existing empathy evaluation benchmarks primarily focus on English-language interactions, resulting in a significant representational gap for Hindi speakers and other Indian language communities. Current mental health AI tools are:
 - Predominantly monolingual and culturally Western-centric
 - Unable to handle code-mixing patterns (Hinglish)
 - Insensitive to cultural communication styles
-- Missing indirect distress signals common in Indian contexts
+- Missing indirect distress signals which are common in Indian contexts
 
 ### Why Simple Translation Isn't Enough
 
-Mental health conversations in India occur within hybrid linguistic spaces characterized by:
+Mental health conversations in India occur within hybrid linguistic spaces characterised by:
 - **Code-mixing**: Hindi-English mixing (Hinglish) is the norm
 - **Cultural communication styles**: More direct in conflict situations, different validation strategies
 - **Regional metaphors**: Culturally specific concepts of emotional well-being
@@ -133,27 +130,48 @@ The project follows a modular architecture integrating multiple components for r
 ### Training Pipeline Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                   Stage 1: English Pretraining               │
-│  Dataset: EPITOME (~10,000 counseling dialogues)             │
-│  Purpose: Learn general empathy patterns                     │
-│  Duration: 5 epochs with early stopping                      │
-└─────────────────┬────────────────────────────────────────────┘
-                  │
-┌─────────────────▼────────────────────────────────────────────┐
-│              Stage 2: Hindi Fine-tuning                      │
-│  Dataset: ~2,000 synthetic Hindi dialogues                   │
-│  Purpose: Adapt to language-specific patterns               │
-│  Features: Code-mixing, cultural validation strategies       │
-│  Duration: 3-5 epochs (reduced LR to prevent forgetting)    │
-└─────────────────┬────────────────────────────────────────────┘
-                  │
-┌─────────────────▼────────────────────────────────────────────┐
-│          Stage 3: Reddit Adaptation (Optional)               │
-│  Dataset: ~900 Reddit posts from Indian subreddits           │
-│  Purpose: Adjust to informal, authentic discourse            │
-│  Challenge: Code-mixed, culturally embedded content          │
-└──────────────────────────────────────────────────────────────┘
+   ┌────────────────────┐
+   │ 1. Reddit Scraping │───► reddit_scraper.py
+   └──────────┬─────────┘
+              ▼
+   ┌───────────────────────┐
+   │ 2. Merge + Clean Data │───► reddit_merger.py
+   └──────────┬────────────┘
+              ▼
+   ┌──────────────────────────────┐
+   │ 3. Synthetic Hinglish LLM    │───► final_text_generator.py
+   │    Dialogues (IndicGPT)      │
+   └──────────┬───────────────────┘
+              ▼
+   ┌─────────────────────────────┐
+   │ 4. Annotation + ASEM labels │───► annotator.py, dataset_loader.py
+   └──────────┬──────────────────┘
+              ▼
+   ┌──────────────────────────────┐
+   │ 5. Classifier Training       │───► train_asem_classifier.py
+   │    (ASEM-XLM-R + Adapters)   │
+   └──────────┬───────────────────┘
+              ▼
+   ┌─────────────────────────────┐
+   │ 6. Evaluation               │───► evaluate_asem.py
+   │    - F1, precision, recall  │
+   └──────────┬──────────────────┘
+              ▼
+   ┌────────────────────────────────────┐
+   │ 7. Cultural Drift Score (CDS)      │───► cds.py
+   │    Ensure consistency across langs │
+   └──────────┬─────────────────────────┘
+              ▼
+   ┌────────────────────────────────────┐
+   │ 8. Uncertainty-aware Inference     │───► uncertainty.py (MC Dropout)
+   │    - abstain when unsure           │
+   └──────────┬─────────────────────────┘
+              ▼
+   ┌────────────────────────────────────┐
+   │ 9. Error Analysis + Explanations   │───► error_analysis.py, explanation_generator.py
+   └────────────────────────────────────┘
+
+
 ```
 
 ### Modified Components
