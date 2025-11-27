@@ -2,7 +2,7 @@
 
 ## DSL501 Machine Learning Project
 
-This repository contains the implementation of a comprehensive machine learning project focused on empathy detection in Hindi language mental health conversations. The project integrates the ASEM (Attention-based Sentiment and Emotion Modelling) framework with XLM-R cross-lingual embeddings to create the first multilingual empathy detection model specifically adapted for Hindi.
+This repository contains the implementation of a comprehensive machine learning project focused on empathy detection in Hindi-language mental health conversations. The project integrates the ASEM (Attention-based Sentiment and Emotion Modelling) framework with XLM-R cross-lingual embeddings to build the first multilingual empathy-detection model specifically adapted for Hindi.
 
 ---
 
