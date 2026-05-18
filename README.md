@@ -178,7 +178,7 @@ The ASEM framework represents a significant advancement in empathy detection by 
 - Epochs: 3-5
 - Features: Code-mixing, cultural validation strategies
 
-**Stage 3: Reddit Adaptation (Optional)**
+**Stage 3: Reddit Adaptation**
 - Dataset: ~900 Reddit posts from Indian subreddits
 - Purpose: Adapt to informal, authentic discourse
 - Carefully limited to avoid overfitting
